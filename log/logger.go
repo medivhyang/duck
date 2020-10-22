@@ -64,16 +64,16 @@ type logger struct {
 type Entry struct {
 	Level   Level
 	Message string
-	Data    []interface{}
+	Data    map[string]interface{}
 	Time    time.Time
 }
 
 type View struct {
-	Time    string        `json:"time"`
-	Level   string        `json:"level"`
-	Module  string        `json:"module,omitempty"`
-	Message string        `json:"message"`
-	Data    []interface{} `json:"data,omitempty"`
+	Time    string                 `json:"time"`
+	Level   string                 `json:"level"`
+	Module  string                 `json:"module,omitempty"`
+	Message string                 `json:"message"`
+	Data    map[string]interface{} `json:"data,omitempty"`
 }
 
 func (e *Entry) View(module string) View {
@@ -202,22 +202,42 @@ func (l *logger) writeJSON(e Entry) {
 	_, _ = l.output.Write(b.Bytes())
 }
 
-func (l *logger) Debug(message string, data ...interface{}) {
-	l.Write(Entry{Level: LevelDebug, Message: message, Data: data})
+func (l *logger) Debug(message string, data ...map[string]interface{}) {
+	var finalData map[string]interface{}
+	if len(data) > 0 {
+		finalData = data[0]
+	}
+	l.Write(Entry{Level: LevelDebug, Message: message, Data: finalData})
 }
 
-func (l *logger) Info(message string, data ...interface{}) {
-	l.Write(Entry{Level: LevelInfo, Message: message, Data: data})
+func (l *logger) Info(message string, data ...map[string]interface{}) {
+	var finalData map[string]interface{}
+	if len(data) > 0 {
+		finalData = data[0]
+	}
+	l.Write(Entry{Level: LevelInfo, Message: message, Data: finalData})
 }
 
-func (l *logger) Warn(message string, data ...interface{}) {
-	l.Write(Entry{Level: LevelWarn, Message: message, Data: data})
+func (l *logger) Warn(message string, data ...map[string]interface{}) {
+	var finalData map[string]interface{}
+	if len(data) > 0 {
+		finalData = data[0]
+	}
+	l.Write(Entry{Level: LevelWarn, Message: message, Data: finalData})
 }
 
-func (l *logger) Error(message string, data ...interface{}) {
-	l.Write(Entry{Level: LevelError, Message: message, Data: data})
+func (l *logger) Error(message string, data ...map[string]interface{}) {
+	var finalData map[string]interface{}
+	if len(data) > 0 {
+		finalData = data[0]
+	}
+	l.Write(Entry{Level: LevelError, Message: message, Data: finalData})
 }
 
-func (l *logger) Fatal(message string, data ...interface{}) {
-	l.Write(Entry{Level: LevelFatal, Message: message, Data: data})
+func (l *logger) Fatal(message string, data ...map[string]interface{}) {
+	var finalData map[string]interface{}
+	if len(data) > 0 {
+		finalData = data[0]
+	}
+	l.Write(Entry{Level: LevelFatal, Message: message, Data: finalData})
 }
