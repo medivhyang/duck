@@ -11,6 +11,7 @@ func main() {
 }
 
 func demoDefault() {
+	log.Default.Apply(log.WithModule("test.default"))
 	log.Debug("hello world", map[string]interface{}{"name": "Medivh"})
 	log.Debugf("hello %s", "Medivh")
 }
