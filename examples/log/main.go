@@ -2,20 +2,27 @@ package main
 
 import (
 	"github.com/medivhyang/duck/log"
-	"os"
 )
 
 func main() {
+	demoDefault()
 	demoText()
 	demoJSON()
 }
 
+func demoDefault() {
+	log.Debug("hello world", map[string]interface{}{"name": "Medivh"})
+	log.Debugf("hello %s", "Medivh")
+}
+
 func demoText() {
-	l := log.New(os.Stdout, log.LevelDebug).Module("test.text").Format(log.FormatText)
+	l := log.New(log.WithEncoding(log.EncodingText), log.WithModule("test.text"))
 	l.Debug("hello world", map[string]interface{}{"name": "Medivh"})
+	l.Debugf("hello %s", "Medivh")
 }
 
 func demoJSON() {
-	l := log.New(os.Stdout, log.LevelDebug).Module("test.json").Format(log.FormatJSON)
+	l := log.New(log.WithEncoding(log.EncodingJSON), log.WithModule("test.json"))
 	l.Debug("hello world", map[string]interface{}{"name": "Medivh"})
+	l.Debugf("hello %s", "Medivh")
 }

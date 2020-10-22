@@ -4,28 +4,48 @@ import "os"
 
 type Fields = map[string]interface{}
 
-var DefaultInstance = New(os.Stdout, LevelDebug)
+var Default = New(WithOutput(os.Stdout), WithLevel(LevelDebug))
 
 func Write(e Entry) {
-	DefaultInstance.Write(e)
+	Default.Write(e)
 }
 
 func Debug(message string, data ...map[string]interface{}) {
-	DefaultInstance.Debug(message, data...)
+	Default.Debug(message, data...)
+}
+
+func Debugf(format string, args ...interface{}) {
+	Default.Debugf(format, args...)
 }
 
 func Info(message string, data ...map[string]interface{}) {
-	DefaultInstance.Info(message, data...)
+	Default.Info(message, data...)
+}
+
+func Infof(format string, args ...interface{}) {
+	Default.Infof(format, args...)
 }
 
 func Warn(message string, data ...map[string]interface{}) {
-	DefaultInstance.Warn(message, data...)
+	Default.Warn(message, data...)
+}
+
+func Warnf(format string, args ...interface{}) {
+	Default.Warnf(format, args...)
 }
 
 func Error(message string, data ...map[string]interface{}) {
-	DefaultInstance.Error(message, data...)
+	Default.Error(message, data...)
+}
+
+func Errorf(format string, args ...interface{}) {
+	Default.Errorf(format, args...)
 }
 
 func Fatal(message string, data ...map[string]interface{}) {
-	DefaultInstance.Fatal(message, data...)
+	Default.Fatal(message, data...)
+}
+
+func Fatalf(format string, args ...interface{}) {
+	Default.Fatalf(format, args...)
 }
