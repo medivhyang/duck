@@ -1,15 +1,15 @@
-package duck
+package refs
 
 import (
 	"reflect"
 	"time"
 )
 
-func RefString(value string) *string {
+func String(value string) *string {
 	return &value
 }
 
-func DerefString(value *string, defaultValue ...string) string {
+func UnwrapString(value *string, defaultValue ...string) string {
 	if value != nil {
 		return *value
 	}
@@ -19,11 +19,11 @@ func DerefString(value *string, defaultValue ...string) string {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(string)
 }
 
-func RefInt(value int) *int {
+func Int(value int) *int {
 	return &value
 }
 
-func DerefInt(value *int, defaultValue ...int) int {
+func UnwrapInt(value *int, defaultValue ...int) int {
 	if value != nil {
 		return *value
 	}
@@ -33,11 +33,11 @@ func DerefInt(value *int, defaultValue ...int) int {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(int)
 }
 
-func RefInt8(value int8) *int8 {
+func Int8(value int8) *int8 {
 	return &value
 }
 
-func DerefInt8(value *int8, defaultValue ...int8) int8 {
+func UnwrapInt8(value *int8, defaultValue ...int8) int8 {
 	if value != nil {
 		return *value
 	}
@@ -47,11 +47,11 @@ func DerefInt8(value *int8, defaultValue ...int8) int8 {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(int8)
 }
 
-func RefInt16(value int16) *int16 {
+func Int16(value int16) *int16 {
 	return &value
 }
 
-func DerefInt16(value *int16, defaultValue ...int16) int16 {
+func UnwrapInt16(value *int16, defaultValue ...int16) int16 {
 	if value != nil {
 		return *value
 	}
@@ -61,11 +61,11 @@ func DerefInt16(value *int16, defaultValue ...int16) int16 {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(int16)
 }
 
-func RefInt32(value int32) *int32 {
+func Int32(value int32) *int32 {
 	return &value
 }
 
-func DerefInt32(value *int32, defaultValue ...int32) int32 {
+func UnwrapInt32(value *int32, defaultValue ...int32) int32 {
 	if value != nil {
 		return *value
 	}
@@ -75,11 +75,11 @@ func DerefInt32(value *int32, defaultValue ...int32) int32 {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(int32)
 }
 
-func RefInt64(value int64) *int64 {
+func Int64(value int64) *int64 {
 	return &value
 }
 
-func DerefInt64(value *int64, defaultValue ...int64) int64 {
+func UnwrapInt64(value *int64, defaultValue ...int64) int64 {
 	if value != nil {
 		return *value
 	}
@@ -89,11 +89,11 @@ func DerefInt64(value *int64, defaultValue ...int64) int64 {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(int64)
 }
 
-func RefUint8(value uint8) *uint8 {
+func Uint8(value uint8) *uint8 {
 	return &value
 }
 
-func DerefUint8(value *uint8, defaultValue ...uint8) uint8 {
+func UnwrapUint8(value *uint8, defaultValue ...uint8) uint8 {
 	if value != nil {
 		return *value
 	}
@@ -103,11 +103,11 @@ func DerefUint8(value *uint8, defaultValue ...uint8) uint8 {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(uint8)
 }
 
-func RefUint16(value uint16) *uint16 {
+func Uint16(value uint16) *uint16 {
 	return &value
 }
 
-func DerefUint16(value *uint16, defaultValue ...uint16) uint16 {
+func UnwrapUint16(value *uint16, defaultValue ...uint16) uint16 {
 	if value != nil {
 		return *value
 	}
@@ -117,11 +117,11 @@ func DerefUint16(value *uint16, defaultValue ...uint16) uint16 {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(uint16)
 }
 
-func RefUint32(value uint32) *uint32 {
+func Uint32(value uint32) *uint32 {
 	return &value
 }
 
-func DerefUint32(value *uint32, defaultValue ...uint32) uint32 {
+func UnwrapUint32(value *uint32, defaultValue ...uint32) uint32 {
 	if value != nil {
 		return *value
 	}
@@ -131,11 +131,11 @@ func DerefUint32(value *uint32, defaultValue ...uint32) uint32 {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(uint32)
 }
 
-func RefUint64(value uint64) *uint64 {
+func Uint64(value uint64) *uint64 {
 	return &value
 }
 
-func DerefUint64(value *uint64, defaultValue ...uint64) uint64 {
+func UnwrapUint64(value *uint64, defaultValue ...uint64) uint64 {
 	if value != nil {
 		return *value
 	}
@@ -145,11 +145,11 @@ func DerefUint64(value *uint64, defaultValue ...uint64) uint64 {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(uint64)
 }
 
-func RefFloat32(value float32) *float32 {
+func Float32(value float32) *float32 {
 	return &value
 }
 
-func DerefFloat32(value *float32, defaultValue ...float32) float32 {
+func UnwrapFloat32(value *float32, defaultValue ...float32) float32 {
 	if value != nil {
 		return *value
 	}
@@ -159,11 +159,11 @@ func DerefFloat32(value *float32, defaultValue ...float32) float32 {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(float32)
 }
 
-func RefFloat64(value float64) *float64 {
+func Float64(value float64) *float64 {
 	return &value
 }
 
-func DerefFloat64(value *float64, defaultValue ...float64) float64 {
+func UnwrapFloat64(value *float64, defaultValue ...float64) float64 {
 	if value != nil {
 		return *value
 	}
@@ -173,11 +173,11 @@ func DerefFloat64(value *float64, defaultValue ...float64) float64 {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(float64)
 }
 
-func RefByte(value byte) *byte {
+func Byte(value byte) *byte {
 	return &value
 }
 
-func DerefByte(value *byte, defaultValue ...byte) byte {
+func UnwrapByte(value *byte, defaultValue ...byte) byte {
 	if value != nil {
 		return *value
 	}
@@ -187,11 +187,11 @@ func DerefByte(value *byte, defaultValue ...byte) byte {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(byte)
 }
 
-func RefRune(value rune) *rune {
+func Rune(value rune) *rune {
 	return &value
 }
 
-func DerefRune(value *rune, defaultValue ...rune) rune {
+func UnwrapRune(value *rune, defaultValue ...rune) rune {
 	if value != nil {
 		return *value
 	}
@@ -201,11 +201,11 @@ func DerefRune(value *rune, defaultValue ...rune) rune {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(rune)
 }
 
-func RefBool(value bool) *bool {
+func Bool(value bool) *bool {
 	return &value
 }
 
-func DerefBool(value *bool, defaultValue ...bool) bool {
+func UnwrapBool(value *bool, defaultValue ...bool) bool {
 	if value != nil {
 		return *value
 	}
@@ -215,11 +215,11 @@ func DerefBool(value *bool, defaultValue ...bool) bool {
 	return reflect.New(reflect.TypeOf(value).Elem()).Elem().Interface().(bool)
 }
 
-func RefTime(value time.Time) *time.Time {
+func Time(value time.Time) *time.Time {
 	return &value
 }
 
-func DerefTime(value *time.Time, defaultValue ...time.Time) time.Time {
+func UnwrapTime(value *time.Time, defaultValue ...time.Time) time.Time {
 	if value != nil {
 		return *value
 	}
