@@ -123,9 +123,9 @@ func (l *Logger) writeText(e Entry) {
 	}
 	v := e.view(l.module, l.timeFormat)
 	b := strings.Builder{}
-	b.WriteString(fmt.Sprintf("%s: %s", v.Time, v.Level))
+	b.WriteString(fmt.Sprintf("%s: [%s]", v.Time, v.Level))
 	if l.module != "" {
-		b.WriteString(fmt.Sprintf(": %s", l.module))
+		b.WriteString(fmt.Sprintf(": [%s]", l.module))
 	}
 	b.WriteString(fmt.Sprintf(": %s", v.Message))
 	if v.Data != nil {
