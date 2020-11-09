@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/BurntSushi/toml"
 	"gopkg.in/yaml.v2"
@@ -166,12 +167,60 @@ func GetEnv(key string) string {
 	return os.Getenv(key)
 }
 
+func GetEnvInt(key string) (int, error) {
+	return strconv.Atoi(GetEnv(key))
+}
+
+func GetEnvInt64(key string) (int64, error) {
+	return strconv.ParseInt(GetEnv(key), 10, 64)
+}
+
+func GetEnvFloat64(key string) (float64, error) {
+	return strconv.ParseFloat(GetEnv(key), 64)
+}
+
+func GetEnvBool(key string) (bool, error) {
+	return strconv.ParseBool(GetEnv(key))
+}
+
 func GetEnvOrDefault(key string, defaultValue ...string) string {
 	s, ok := os.LookupEnv(key)
 	if !ok && len(defaultValue) > 0 {
 		return defaultValue[0]
 	}
 	return s
+}
+
+func GetEnvIntOrDefault(key string, defaultValue ...int) (int, error) {
+	v, ok := os.LookupEnv(key)
+	if !ok && len(defaultValue) > 0 {
+		return defaultValue[0], nil
+	}
+	return strconv.Atoi(v)
+}
+
+func GetEnvInt64OrDefault(key string, defaultValue ...int64) (int64, error) {
+	v, ok := os.LookupEnv(key)
+	if !ok && len(defaultValue) > 0 {
+		return defaultValue[0], nil
+	}
+	return strconv.ParseInt(GetEnv(v), 10, 64)
+}
+
+func GetEnvFloat64OrDefault(key string, defaultValue ...float64) (float64, error) {
+	v, ok := os.LookupEnv(key)
+	if !ok && len(defaultValue) > 0 {
+		return defaultValue[0], nil
+	}
+	return strconv.ParseFloat(GetEnv(v), 64)
+}
+
+func GetEnvBoolOrDefault(key string, defaultValue ...bool) (bool, error) {
+	v, ok := os.LookupEnv(key)
+	if !ok && len(defaultValue) > 0 {
+		return defaultValue[0], nil
+	}
+	return strconv.ParseBool(GetEnv(v))
 }
 
 func LoadEnv(contentType ContentType, key string, target interface{}) error {
