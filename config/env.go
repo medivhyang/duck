@@ -1,6 +1,6 @@
 package config
 
-type Env struct { }
+type Env struct{}
 
 func NewEnv() *Env {
 	return &Env{}

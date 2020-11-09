@@ -17,7 +17,7 @@ type ContentType string
 
 const (
 	JSON ContentType = "JSON"
-	XML ContentType = "XML"
+	XML  ContentType = "XML"
 	YAML ContentType = "YAML"
 	TOML ContentType = "TOML"
 )
@@ -40,7 +40,7 @@ var (
 )
 
 func Decode(contentType ContentType, source []byte, target interface{}) error {
-	if !contentType.Valid(){
+	if !contentType.Valid() {
 		return ErrUnsupportedContentType
 	}
 	switch contentType {
@@ -65,14 +65,14 @@ func Decode(contentType ContentType, source []byte, target interface{}) error {
 }
 
 func DecodeString(contentType ContentType, source string, target interface{}) error {
-	if !contentType.Valid(){
+	if !contentType.Valid() {
 		return ErrUnsupportedContentType
 	}
 	return Decode(contentType, []byte(source), target)
 }
 
 func DecodeReader(contentType ContentType, source io.Reader, target interface{}) error {
-	if !contentType.Valid(){
+	if !contentType.Valid() {
 		return ErrUnsupportedContentType
 	}
 	switch contentType {
@@ -90,7 +90,7 @@ func DecodeReader(contentType ContentType, source io.Reader, target interface{})
 }
 
 func Encode(contentType ContentType, source interface{}) ([]byte, error) {
-	if !contentType.Valid(){
+	if !contentType.Valid() {
 		return nil, ErrUnsupportedContentType
 	}
 	switch contentType {
@@ -121,7 +121,7 @@ func Encode(contentType ContentType, source interface{}) ([]byte, error) {
 }
 
 func EncodeToString(contentType ContentType, source interface{}) (string, error) {
-	if !contentType.Valid(){
+	if !contentType.Valid() {
 		return "", ErrUnsupportedContentType
 	}
 	bs, err := Encode(contentType, source)
@@ -132,7 +132,7 @@ func EncodeToString(contentType ContentType, source interface{}) (string, error)
 }
 
 func EncodeToWriter(contentType ContentType, source interface{}, target io.Writer) error {
-	if !contentType.Valid(){
+	if !contentType.Valid() {
 		return ErrUnsupportedContentType
 	}
 	switch contentType {
@@ -166,7 +166,7 @@ func GetEnv(key string) string {
 	return os.Getenv(key)
 }
 
-func GetEnvOrDefault(key string, defaultValue ... string) string {
+func GetEnvOrDefault(key string, defaultValue ...string) string {
 	s, ok := os.LookupEnv(key)
 	if !ok && len(defaultValue) > 0 {
 		return defaultValue[0]
@@ -175,7 +175,7 @@ func GetEnvOrDefault(key string, defaultValue ... string) string {
 }
 
 func LoadEnv(contentType ContentType, key string, target interface{}) error {
-	if !contentType.Valid(){
+	if !contentType.Valid() {
 		return ErrUnsupportedContentType
 	}
 	content := os.Getenv(key)
@@ -186,7 +186,7 @@ func LoadEnv(contentType ContentType, key string, target interface{}) error {
 }
 
 func LoadFile(contentType ContentType, filePath string, target interface{}) error {
-	if !contentType.Valid(){
+	if !contentType.Valid() {
 		return ErrUnsupportedContentType
 	}
 	file, err := os.Open(filePath)
@@ -198,7 +198,7 @@ func LoadFile(contentType ContentType, filePath string, target interface{}) erro
 }
 
 func StoreFile(contentType ContentType, source interface{}, filePath string) error {
-	if !contentType.Valid(){
+	if !contentType.Valid() {
 		return ErrUnsupportedContentType
 	}
 	err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm)
@@ -214,7 +214,7 @@ func StoreFile(contentType ContentType, source interface{}, filePath string) err
 }
 
 func LoadOrStoreFile(contentType ContentType, filePath string, value interface{}) error {
-	if !contentType.Valid(){
+	if !contentType.Valid() {
 		return ErrUnsupportedContentType
 	}
 	_, err := os.Stat(filePath)
