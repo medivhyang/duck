@@ -167,19 +167,19 @@ func GetEnv(key string) string {
 	return os.Getenv(key)
 }
 
-func GetEnvInt(key string) (int, error) {
+func GetIntEnv(key string) (int, error) {
 	return strconv.Atoi(GetEnv(key))
 }
 
-func GetEnvInt64(key string) (int64, error) {
+func GetInt64Env(key string) (int64, error) {
 	return strconv.ParseInt(GetEnv(key), 10, 64)
 }
 
-func GetEnvFloat64(key string) (float64, error) {
+func GetFloat64Env(key string) (float64, error) {
 	return strconv.ParseFloat(GetEnv(key), 64)
 }
 
-func GetEnvBool(key string) (bool, error) {
+func GetBoolEnv(key string) (bool, error) {
 	return strconv.ParseBool(GetEnv(key))
 }
 
@@ -191,7 +191,7 @@ func GetEnvOrDefault(key string, defaultValue ...string) string {
 	return s
 }
 
-func GetEnvIntOrDefault(key string, defaultValue ...int) (int, error) {
+func GetIntEnvOrDefault(key string, defaultValue ...int) (int, error) {
 	v, ok := os.LookupEnv(key)
 	if !ok && len(defaultValue) > 0 {
 		return defaultValue[0], nil
@@ -199,7 +199,7 @@ func GetEnvIntOrDefault(key string, defaultValue ...int) (int, error) {
 	return strconv.Atoi(v)
 }
 
-func GetEnvInt64OrDefault(key string, defaultValue ...int64) (int64, error) {
+func GetInt64EnvOrDefault(key string, defaultValue ...int64) (int64, error) {
 	v, ok := os.LookupEnv(key)
 	if !ok && len(defaultValue) > 0 {
 		return defaultValue[0], nil
@@ -207,7 +207,7 @@ func GetEnvInt64OrDefault(key string, defaultValue ...int64) (int64, error) {
 	return strconv.ParseInt(GetEnv(v), 10, 64)
 }
 
-func GetEnvFloat64OrDefault(key string, defaultValue ...float64) (float64, error) {
+func GetFloat64EnvOrDefault(key string, defaultValue ...float64) (float64, error) {
 	v, ok := os.LookupEnv(key)
 	if !ok && len(defaultValue) > 0 {
 		return defaultValue[0], nil
@@ -215,7 +215,7 @@ func GetEnvFloat64OrDefault(key string, defaultValue ...float64) (float64, error
 	return strconv.ParseFloat(GetEnv(v), 64)
 }
 
-func GetEnvBoolOrDefault(key string, defaultValue ...bool) (bool, error) {
+func GetBoolEnvOrDefault(key string, defaultValue ...bool) (bool, error) {
 	v, ok := os.LookupEnv(key)
 	if !ok && len(defaultValue) > 0 {
 		return defaultValue[0], nil

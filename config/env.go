@@ -11,19 +11,19 @@ func (*Env) Get(key string) string {
 }
 
 func (*Env) GetInt(key string) (int, error) {
-	return GetEnvInt(key)
+	return GetIntEnv(key)
 }
 
 func (*Env) GetInt64(key string) (int64, error) {
-	return GetEnvInt64(key)
+	return GetInt64Env(key)
 }
 
 func (*Env) GetFloat64(key string) (float64, error) {
-	return GetEnvFloat64(key)
+	return GetFloat64Env(key)
 }
 
 func (*Env) GetBool(key string) (bool, error) {
-	return GetEnvBool(key)
+	return GetBoolEnv(key)
 }
 
 func (*Env) GetOrDefault(key string, defaultValue ...string) string {
@@ -31,19 +31,19 @@ func (*Env) GetOrDefault(key string, defaultValue ...string) string {
 }
 
 func (*Env) GetIntOrDefault(key string, defaultValue ...int) (int, error) {
-	return GetEnvIntOrDefault(key, defaultValue...)
+	return GetIntEnvOrDefault(key, defaultValue...)
 }
 
 func (*Env) GetInt64OrDefault(key string, defaultValue ...int64) (int64, error) {
-	return GetEnvInt64OrDefault(key, defaultValue...)
+	return GetInt64EnvOrDefault(key, defaultValue...)
 }
 
 func (*Env) GetFloat64OrDefault(key string, defaultValue ...float64) (float64, error) {
-	return GetEnvFloat64OrDefault(key, defaultValue...)
+	return GetFloat64EnvOrDefault(key, defaultValue...)
 }
 
 func (*Env) GetBoolOrDefault(key string, defaultValue ...bool) (bool, error) {
-	return GetEnvBoolOrDefault(key, defaultValue...)
+	return GetBoolEnvOrDefault(key, defaultValue...)
 }
 
 func (*Env) Load(contentType ContentType, key string, target interface{}) error {
