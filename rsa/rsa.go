@@ -10,6 +10,8 @@ import (
 	"os"
 )
 
+var ErrInvalidPublicKey = errors.New("invalid rsa public key")
+
 func GenerateKeyPairFiles(bits int, publicKeyFilePath, privateKeyFilePath string) error {
 	privateKey, err := rsa.GenerateKey(rand.Reader, bits)
 	if err != nil {
@@ -44,52 +46,73 @@ func GenerateKeyPairFiles(bits int, publicKeyFilePath, privateKeyFilePath string
 	return nil
 }
 
-func ReadPublicKeyFromFile(filePath string) (interface{}, error) {
-	b, err := ioutil.ReadFile(filePath)
+func ParsePublicKeyFromPem(b []byte) (*rsa.PublicKey, error) {
+	block, _ := pem.Decode(b)
+	key, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
+		if cert, err := x509.ParseCertificate(block.Bytes); err == nil {
+			key = cert.PublicKey
+		} else {
+			return nil, err
+		}
 		return nil, err
 	}
-	block, _ := pem.Decode(b)
-	return x509.ParsePKIXPublicKey(block.Bytes)
+	v, ok := key.(*rsa.PublicKey)
+	if !ok {
+		return nil, ErrInvalidPublicKey
+	}
+	return v, nil
 }
 
-func ReadPrivateKeyFromFile(filePath string) (*rsa.PrivateKey, error) {
-	b, err := ioutil.ReadFile(filePath)
-	if err != nil {
-		return nil, err
-	}
+func ParsePrivateKeyFromPem(b []byte) (*rsa.PrivateKey, error) {
 	block, _ := pem.Decode(b)
 	return x509.ParsePKCS1PrivateKey(block.Bytes)
 }
 
-func Encrypt(plainText []byte, publicKey interface{}) ([]byte, error) {
-	v, ok := publicKey.(*rsa.PublicKey)
-	if !ok {
-		return nil, errors.New("invalid public key")
-	}
-	cipherText, err := rsa.EncryptPKCS1v15(rand.Reader, v, plainText)
+func Encrypt(plainText []byte, publicKey *rsa.PublicKey) ([]byte, error) {
+	cipherText, err := rsa.EncryptPKCS1v15(rand.Reader, publicKey, plainText)
 	if err != nil {
 		return nil, err
 	}
 	return cipherText, nil
 }
 
-func EncryptWithFile(plainText []byte, publicKeyFilePath string) ([]byte, error) {
-	publicKey, err := ReadPublicKeyFromFile(publicKeyFilePath)
-	if err != nil {
-		return nil, err
-	}
-	return Encrypt(plainText, publicKey)
-}
-
 func Decrypt(cipherText []byte, privateKey *rsa.PrivateKey) ([]byte, error) {
 	return rsa.DecryptPKCS1v15(rand.Reader, privateKey, cipherText)
 }
 
-func DecryptWithFile(cipherText []byte, privateKeyPath string) ([]byte, error) {
-	privateKey, err := ReadPrivateKeyFromFile(privateKeyPath)
+func EncryptWithBytes(plainText []byte, publicKeyBytes []byte) ([]byte, error) {
+	publicKey, err := ParsePublicKeyFromPem(publicKeyBytes)
 	if err != nil {
 		return nil, err
 	}
-	return Decrypt(cipherText, privateKey)
+	cipherText, err := rsa.EncryptPKCS1v15(rand.Reader, publicKey, plainText)
+	if err != nil {
+		return nil, err
+	}
+	return cipherText, nil
+}
+
+func DecryptWithBytes(cipherText []byte, privateKeyBytes []byte) ([]byte, error) {
+	privateKey, err := ParsePrivateKeyFromPem(privateKeyBytes)
+	if err != nil {
+		return nil, err
+	}
+	return rsa.DecryptPKCS1v15(rand.Reader, privateKey, cipherText)
+}
+
+func EncryptWithFile(plainText []byte, publicKeyFilePath string) ([]byte, error) {
+	b, err := ioutil.ReadFile(publicKeyFilePath)
+	if err != nil {
+		return nil, err
+	}
+	return EncryptWithBytes(plainText, b)
+}
+
+func DecryptWithFile(cipherText []byte, privateKeyFilePath string) ([]byte, error) {
+	b, err := ioutil.ReadFile(privateKeyFilePath)
+	if err != nil {
+		return nil, err
+	}
+	return DecryptWithBytes(cipherText, b)
 }
