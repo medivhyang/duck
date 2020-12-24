@@ -1,258 +1,98 @@
 package log
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
-	"os"
-	"strings"
 	"time"
 )
 
-type Level int
-
-type Encoding string
-
-const (
-	EncodingJSON Encoding = "json"
-	EncodingText Encoding = "text"
-)
-
-type Middleware = func(e Entry) Entry
+func New(module string, level Level, appenders ...Appender) *Logger {
+	return &Logger{module: module, level: level, appenders: appenders}
+}
 
 type Logger struct {
-	output      io.Writer
-	level       Level
-	module      string
-	encoding    Encoding
-	middlewares []Middleware
-
-	beauty bool
-	indent string
-	prefix string
-
-	timeFormat string
+	module    string
+	level     Level
+	appenders []Appender
 }
 
-type Entry struct {
-	Level   Level
-	Message string
-	Data    map[string]interface{}
-	Time    time.Time
+func (l *Logger) New(module string) *Logger {
+	return New(module, l.level, l.appenders...)
 }
 
-type view struct {
-	Time    string                 `json:"time"`
-	Level   string                 `json:"level"`
-	Module  string                 `json:"module,omitempty"`
-	Message string                 `json:"message"`
-	Data    map[string]interface{} `json:"data,omitempty"`
-}
-
-func (e *Entry) view(module string, timeFormat string) view {
-	if timeFormat == "" {
-		timeFormat = time.RFC3339
-	}
-	return view{
-		Time:    e.Time.Format(timeFormat),
-		Level:   LevelText(e.Level),
-		Module:  module,
-		Message: e.Message,
-		Data:    e.Data,
-	}
-}
-
-func New(options ...Option) *Logger {
-	return (&Logger{level: LevelDebug, output: os.Stdout}).Apply(options...)
-}
-
-func (l *Logger) Apply(options ...Option) *Logger {
-	for _, option := range options {
-		option(l)
-	}
+func (l *Logger) SetModule(module string) *Logger {
+	l.module = module
 	return l
 }
 
-func (l *Logger) Write(e Entry) {
-	if l.output == nil {
-		return
-	}
-	for _, mid := range l.middlewares {
-		e = mid(e)
-	}
-	if e.Level < l.level {
-		return
-	}
-	if e.Time == (time.Time{}) {
-		e.Time = time.Now()
-	}
-	switch l.encoding {
-	case EncodingJSON:
-		l.writeJSON(e)
-	case EncodingText:
-		fallthrough
-	default:
-		l.writeText(e)
-	}
+func (l *Logger) SetLevel(level Level) *Logger {
+	l.level = level
+	return l
 }
 
-func (l *Logger) writeText(e Entry) {
-	if l.output == nil {
+func (l *Logger) SetAppenders(appenders ...Appender) *Logger {
+	l.appenders = appenders
+	return l
+}
+
+func (l *Logger) Append(level Level, message string, data ...map[string]interface{}) {
+	if level < l.level {
 		return
 	}
-	v := e.view(l.module, l.timeFormat)
-	b := strings.Builder{}
-	b.WriteString(fmt.Sprintf("%s: [%s]", v.Time, v.Level))
-	if l.module != "" {
-		b.WriteString(fmt.Sprintf(": [%s]", l.module))
+	e := Event{
+		Module:  l.module,
+		Level:   level,
+		Message: message,
+		Time:    time.Now(),
 	}
-	b.WriteString(fmt.Sprintf(": %s", v.Message))
-	if v.Data != nil {
-		bytes, err := json.Marshal(v.Data)
-		if err != nil {
-			b.WriteString(fmt.Sprintf(": <json marshal fail: %s>", err.Error()))
-		} else {
-			b.WriteString(fmt.Sprintf(": %s", string(bytes)))
-		}
+	if len(data) > 0 {
+		e.Data = data[0]
 	}
-	b.WriteString("\r\n")
-	_, _ = io.WriteString(l.output, b.String())
+	for _, appender := range l.appenders {
+		_ = appender.Append(e)
+	}
 	return
 }
 
-func (l *Logger) writeJSON(e Entry) {
-	if l.output == nil {
-		return
-	}
-	v := e.view(l.module, l.timeFormat)
-	b := bytes.Buffer{}
-	if l.beauty {
-		bs, err := json.MarshalIndent(v, l.prefix, l.indent)
-		if err != nil {
-			b.WriteString(fmt.Sprintf("{\"error\":\"<json marshal indent fail: %s>\"}", err.Error()))
-		} else {
-			b.Write(bs)
-		}
-	} else {
-		bs, err := json.Marshal(v)
-		if err != nil {
-			b.WriteString(fmt.Sprintf("{\"error\":\"<json marshal fail: %s>\"}", err.Error()))
-		} else {
-			b.Write(bs)
-		}
-	}
-	b.WriteString("\r\n")
-	_, _ = l.output.Write(b.Bytes())
+func (l *Logger) Appendf(level Level, format string, args ...interface{}) {
+	l.Append(level, fmt.Sprintf(format, args...))
 }
 
 func (l *Logger) Debug(message string, data ...map[string]interface{}) {
-	var finalData map[string]interface{}
-	if len(data) > 0 {
-		finalData = data[0]
-	}
-	l.Write(Entry{Level: LevelDebug, Message: message, Data: finalData})
+	l.Append(LevelDebug, message, data...)
 }
 
 func (l *Logger) Debugf(format string, args ...interface{}) {
-	l.Write(Entry{Level: LevelDebug, Message: fmt.Sprintf(format, args...)})
+	l.Appendf(LevelDebug, format, args...)
 }
 
 func (l *Logger) Info(message string, data ...map[string]interface{}) {
-	var finalData map[string]interface{}
-	if len(data) > 0 {
-		finalData = data[0]
-	}
-	l.Write(Entry{Level: LevelInfo, Message: message, Data: finalData})
+	l.Append(LevelInfo, message, data...)
 }
 
 func (l *Logger) Infof(format string, args ...interface{}) {
-	l.Write(Entry{Level: LevelInfo, Message: fmt.Sprintf(format, args...)})
+	l.Appendf(LevelInfo, format, args...)
 }
 
 func (l *Logger) Warn(message string, data ...map[string]interface{}) {
-	var finalData map[string]interface{}
-	if len(data) > 0 {
-		finalData = data[0]
-	}
-	l.Write(Entry{Level: LevelWarn, Message: message, Data: finalData})
+	l.Append(LevelWarn, message, data...)
 }
 
 func (l *Logger) Warnf(format string, args ...interface{}) {
-	l.Write(Entry{Level: LevelWarn, Message: fmt.Sprintf(format, args...)})
+	l.Appendf(LevelWarn, format, args...)
 }
 
 func (l *Logger) Error(message string, data ...map[string]interface{}) {
-	var finalData map[string]interface{}
-	if len(data) > 0 {
-		finalData = data[0]
-	}
-	l.Write(Entry{Level: LevelError, Message: message, Data: finalData})
+	l.Append(LevelError, message, data...)
 }
 
 func (l *Logger) Errorf(format string, args ...interface{}) {
-	l.Write(Entry{Level: LevelError, Message: fmt.Sprintf(format, args...)})
+	l.Appendf(LevelError, format, args...)
 }
 
 func (l *Logger) Fatal(message string, data ...map[string]interface{}) {
-	var finalData map[string]interface{}
-	if len(data) > 0 {
-		finalData = data[0]
-	}
-	l.Write(Entry{Level: LevelFatal, Message: message, Data: finalData})
+	l.Append(LevelFatal, message, data...)
 }
 
 func (l *Logger) Fatalf(format string, args ...interface{}) {
-	l.Write(Entry{Level: LevelFatal, Message: fmt.Sprintf(format, args...)})
-}
-
-type Option func(l *Logger)
-
-func WithLevel(level Level) Option {
-	return func(l *Logger) {
-		l.level = level
-	}
-}
-
-func WithModule(name string) Option {
-	return func(l *Logger) {
-		l.module = name
-	}
-}
-
-func WithOutput(writer io.Writer) Option {
-	return func(l *Logger) {
-		l.output = writer
-	}
-}
-
-func WithBeauty(ok bool) Option {
-	return func(l *Logger) {
-		l.beauty = ok
-	}
-}
-
-func WithIndent(prefix string, indent string) Option {
-	return func(l *Logger) {
-		l.prefix = prefix
-		l.indent = indent
-	}
-}
-
-func WithEncoding(encoding Encoding) Option {
-	return func(l *Logger) {
-		l.encoding = encoding
-	}
-}
-
-func WithTimeFormat(format string) Option {
-	return func(l *Logger) {
-		l.timeFormat = format
-	}
-}
-
-func WithMiddlewares(middlewares ...Middleware) Option {
-	return func(l *Logger) {
-		l.middlewares = append(l.middlewares, middlewares...)
-	}
+	l.Appendf(LevelFatal, format, args...)
 }

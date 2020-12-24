@@ -1,14 +1,8 @@
 package log
 
-import "os"
-
 type Fields = map[string]interface{}
 
-var Default = New(WithOutput(os.Stdout), WithLevel(LevelDebug))
-
-func Write(e Entry) {
-	Default.Write(e)
-}
+var Default = New("", LevelDebug, NewConsoleAppender(NewTextFormatter()))
 
 func Debug(message string, data ...map[string]interface{}) {
 	Default.Debug(message, data...)
