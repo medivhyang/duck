@@ -2,7 +2,7 @@ package log
 
 type Fields = map[string]interface{}
 
-var Default = New("", LevelDebug, NewConsoleAppender(NewTextFormatter()))
+var Default = New("", LevelDebug, NewConsoleAppender(NewTextFormatter())).SetFileSkip(3)
 
 func Debug(message string, data ...map[string]interface{}) {
 	Default.Debug(message, data...)

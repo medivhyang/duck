@@ -8,4 +8,6 @@ type Event struct {
 	Message string
 	Time    time.Time
 	Data    map[string]interface{}
+	File    string
+	Line    int
 }

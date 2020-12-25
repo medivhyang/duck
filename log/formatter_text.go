@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -21,24 +22,31 @@ func (f *TextFormatter) SetTimeLayout(layout string) *TextFormatter {
 }
 
 func (f *TextFormatter) Format(e Event) ([]byte, error) {
-	buffer := bytes.Buffer{}
+	buf := bytes.Buffer{}
 
-	buffer.WriteString(fmt.Sprintf("%s", e.Time.Format(f.timeLayout)))
+	buf.WriteString(fmt.Sprintf("%s", e.Time.Format(f.timeLayout)))
 	if e.Module != "" {
-		buffer.WriteString(fmt.Sprintf(": [%s]", e.Module))
+		buf.WriteString(fmt.Sprintf(": [%s]", e.Module))
 	}
 	if LevelText(e.Level) != "" {
-		buffer.WriteString(fmt.Sprintf(": [%s]", LevelText(e.Level)))
+		buf.WriteString(fmt.Sprintf(": [%s]", LevelText(e.Level)))
 	}
-	buffer.WriteString(fmt.Sprintf(": %s", e.Message))
+	if len(e.File) > 0 {
+		buf.WriteString(": ")
+		buf.WriteString(e.File)
+		buf.WriteString(":")
+		buf.WriteString(strconv.Itoa(e.Line))
+	}
+	buf.WriteString(fmt.Sprintf(": %s", e.Message))
 	if e.Data != nil {
 		bs, err := json.Marshal(e.Data)
 		if err != nil {
-			buffer.WriteString(fmt.Sprintf(": <json marshal fail: %s>", err.Error()))
+			buf.WriteString(fmt.Sprintf(": <json marshal fail: %s>", err.Error()))
 		} else {
-			buffer.WriteString(fmt.Sprintf(": %s", string(bs)))
+			buf.WriteString(fmt.Sprintf(": %s", string(bs)))
 		}
 	}
-	buffer.WriteString("\r\n")
-	return buffer.Bytes(), nil
+	buf.WriteString("\n")
+
+	return buf.Bytes(), nil
 }

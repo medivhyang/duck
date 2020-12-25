@@ -2,37 +2,57 @@ package main
 
 import (
 	"github.com/medivhyang/duck/log"
+	"time"
 )
 
 func main() {
-	demoDefault()
-	demoText()
+	demoSimple()
+	demoModule()
+	demoData()
+	demoTimeLocation()
 	demoJSON()
+	demoFile()
+	demoFileAppender()
 }
 
-func demoDefault() {
-	log.Debug("hello world", log.Fields{"name": "medivh"})
-	log.Debugf("hello %s", "Medivh")
+func demoSimple() {
+	log.Info("hello world")
 }
 
-func demoText() {
-	l := log.New("demo.text", log.LevelDebug, log.NewConsoleAppender(log.NewTextFormatter()))
-	l.Debug("hello world", log.Fields{"name": "Medivh"})
-	l.Debugf("hello %s", "Medivh")
+func demoModule() {
+	log.Default.New("test").Info("hello world")
+}
+
+func demoData() {
+	log.Error("terrible", log.Fields{"name": "ying", "age": 25})
+}
+
+func demoTimeLocation() {
+	loc, err := time.LoadLocation("America/New_York")
+	if err != nil {
+		panic(err)
+	}
+	l := log.Default.New("").SetTimeLocation(loc)
+	l.Info("hello world")
 }
 
 func demoJSON() {
-	l := log.New("demo.json", log.LevelDebug, log.NewConsoleAppender(log.NewJSONFormatter()))
-	l.Debug("hello world", log.Fields{"name": "medivh", "age": 18})
+	l := log.Default.New("").SetAppenders(log.NewConsoleAppender(log.NewJSONFormatter()))
+	l.Error("terrible", log.Fields{"name": "ying", "age": 25})
+}
 
+func demoFile() {
+	l := log.Default.New("").EnableFile(log.LevelError)
+	l.Info("hello world")
+	l.Error("terrible")
+}
+
+func demoFileAppender() {
 	fileAppender, err := log.NewFileAppender("log.txt", log.NewJSONFormatter())
 	if err != nil {
 		panic(err)
 	}
-	fileAppender = fileAppender.SetLevel(log.LevelWarn)
-	l.SetModule("demo.json.file").SetAppenders(
-		fileAppender,
-	)
-	l.Debug("hello world")
-	l.Warn("hello world")
+	l := log.New("", log.LevelDebug, fileAppender)
+	l.Info("hello world")
+	l.Error("terrible", log.Fields{"name": "ying", "age": 25})
 }
