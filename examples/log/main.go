@@ -17,6 +17,7 @@ func main() {
 
 func demoSimple() {
 	log.Info("hello world")
+	log.Infof("helo %s", "Medivh")
 }
 
 func demoModule() {
