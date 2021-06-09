@@ -13,7 +13,7 @@ func main() {
 		Addr:  ":8080",
 		Debug: true,
 	}
-	if err := config.LoadOrStoreFile(config.JSON, "config.json", &instance); err != nil {
+	if err := config.LoadOrStoreFile("config.json", &instance, config.DecodeJSON, config.EncodeJSON); err != nil {
 		panic(err)
 	}
 	fmt.Println(instance)

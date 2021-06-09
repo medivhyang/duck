@@ -1,5 +1,21 @@
 package slices
 
+func ContainInts(source []int, target ...int) bool {
+	for _, t := range target {
+		flag := false
+		for _, s := range source {
+			if t == s {
+				flag = true
+				break
+			}
+		}
+		if !flag {
+			return false
+		}
+	}
+	return true
+}
+
 func UniqueInts(items []int) []int {
 	m := make(map[int]bool, len(items))
 	for _, item := range items {
@@ -26,14 +42,4 @@ func RemoveInts(source []int, target []int) []int {
 		}
 	}
 	return result
-}
-
-type Ints []int
-
-func (source Ints) Unique() []int {
-	return UniqueInts(source)
-}
-
-func (source Ints) Remove(target []int) []int {
-	return RemoveInts(source, target)
 }

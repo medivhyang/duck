@@ -33,12 +33,12 @@ func demoTimeLocation() {
 	if err != nil {
 		panic(err)
 	}
-	l := log.Default.New("").SetTimeLocation(loc)
+	l := log.Default.New("").TimeLocation(loc)
 	l.Info("hello world")
 }
 
 func demoJSON() {
-	l := log.Default.New("").SetAppenders(log.NewConsoleAppender(log.NewJSONFormatter()))
+	l := log.Default.New("").Append(log.NewConsoleAppender(log.NewJSONFormatter()))
 	l.Error("terrible", log.Fields{"name": "ying", "age": 25})
 }
 

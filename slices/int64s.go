@@ -1,5 +1,21 @@
 package slices
 
+func ContainInt64s(source []int64, target ...int64) bool {
+	for _, t := range target {
+		flag := false
+		for _, s := range source {
+			if t == s {
+				flag = true
+				break
+			}
+		}
+		if !flag {
+			return false
+		}
+	}
+	return true
+}
+
 func UniqueInt64s(items []int64) []int64 {
 	m := make(map[int64]bool, len(items))
 	for _, item := range items {
@@ -26,14 +42,4 @@ func RemoveInt64s(source []int64, target []int64) []int64 {
 		}
 	}
 	return result
-}
-
-type Int64s []int64
-
-func (source Int64s) Unique() []int64 {
-	return UniqueInt64s(source)
-}
-
-func (source Int64s) Remove(target []int64) []int64 {
-	return RemoveInt64s(source, target)
 }

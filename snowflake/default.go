@@ -2,8 +2,10 @@ package snowflake
 
 import "sync"
 
-var instance *Node
-var once = sync.Once{}
+var (
+	instance *Node
+	once     = sync.Once{}
+)
 
 func Generate() ID {
 	once.Do(func() {

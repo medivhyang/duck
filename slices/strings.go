@@ -5,6 +5,22 @@ import (
 	"strings"
 )
 
+func ContainStrings(source []string, target ...string) bool {
+	for _, t := range target {
+		flag := false
+		for _, s := range source {
+			if t == s {
+				flag = true
+				break
+			}
+		}
+		if !flag {
+			return false
+		}
+	}
+	return true
+}
+
 func UniqueStrings(items []string) []string {
 	m := make(map[string]bool, len(items))
 	for _, item := range items {
@@ -81,69 +97,6 @@ func ToFloat64s(source []string) ([]float64, error) {
 }
 
 func ToBools(source []string) ([]bool, error) {
-	var result []bool
-	for _, item := range source {
-		v, err := strconv.ParseBool(item)
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, v)
-	}
-	return result, nil
-}
-
-type Strings []string
-
-func (source Strings) Unique() []string {
-
-	return UniqueStrings(source)
-}
-
-func (source Strings) Trim() []string {
-	return TrimStrings(source)
-}
-
-func (source Strings) Remove(target []string) []string {
-	return RemoveStrings(source, target)
-}
-
-func (source Strings) ToInts() ([]int, error) {
-	var result []int
-	for _, item := range source {
-		v, err := strconv.Atoi(item)
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, v)
-	}
-	return result, nil
-}
-
-func (source Strings) ToInt64s() ([]int64, error) {
-	var result []int64
-	for _, item := range source {
-		v, err := strconv.ParseInt(item, 10, 64)
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, v)
-	}
-	return result, nil
-}
-
-func (source Strings) ToFloat64s() ([]float64, error) {
-	var result []float64
-	for _, item := range source {
-		v, err := strconv.ParseFloat(item, 64)
-		if err != nil {
-			return nil, err
-		}
-		result = append(result, v)
-	}
-	return result, nil
-}
-
-func (source Strings) ToBools() ([]bool, error) {
 	var result []bool
 	for _, item := range source {
 		v, err := strconv.ParseBool(item)

@@ -1,23 +1,13 @@
 package options
 
-import (
-	"reflect"
-	"time"
-)
-
 type String struct {
 	Valid bool
 	Value string
 }
 
-func (o String) Unwrap(defaultValue ...string) string {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(string)
+type Strings struct {
+	Valid bool
+	Value []string
 }
 
 type Int struct {
@@ -25,14 +15,9 @@ type Int struct {
 	Value int
 }
 
-func (o Int) Unwrap(defaultValue ...int) int {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(int)
+type Ints struct {
+	Valid bool
+	Value []int
 }
 
 type Int8 struct {
@@ -40,14 +25,9 @@ type Int8 struct {
 	Value int8
 }
 
-func (o Int8) Unwrap(defaultValue ...int8) int8 {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(int8)
+type Int8s struct {
+	Valid bool
+	Value []int8
 }
 
 type Int16 struct {
@@ -55,14 +35,9 @@ type Int16 struct {
 	Value int16
 }
 
-func (o Int16) Unwrap(defaultValue ...int16) int16 {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(int16)
+type Int16s struct {
+	Valid bool
+	Value []int16
 }
 
 type Int32 struct {
@@ -70,14 +45,9 @@ type Int32 struct {
 	Value int32
 }
 
-func (o Int32) Unwrap(defaultValue ...int32) int32 {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(int32)
+type Int32s struct {
+	Valid bool
+	Value []int32
 }
 
 type Int64 struct {
@@ -85,14 +55,9 @@ type Int64 struct {
 	Value int64
 }
 
-func (o Int64) Unwrap(defaultValue ...int64) int64 {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(int64)
+type Int64s struct {
+	Valid bool
+	Value []int64
 }
 
 type Uint8 struct {
@@ -100,14 +65,9 @@ type Uint8 struct {
 	Value uint8
 }
 
-func (o Uint8) Unwrap(defaultValue ...uint8) uint8 {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(uint8)
+type Uint8s struct {
+	Valid bool
+	Value []uint8
 }
 
 type Uint16 struct {
@@ -115,29 +75,14 @@ type Uint16 struct {
 	Value uint16
 }
 
-func (o Uint16) Unwrap(defaultValue ...uint16) uint16 {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(uint16)
-}
-
-type Uint32 struct {
+type Uint16s struct {
 	Valid bool
-	Value uint32
+	Value []uint16
 }
 
-func (o Uint32) Unwrap(defaultValue ...uint32) uint32 {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(uint32)
+type Uint32s struct {
+	Valid bool
+	Value []uint32
 }
 
 type Uint64 struct {
@@ -145,14 +90,9 @@ type Uint64 struct {
 	Value uint64
 }
 
-func (o Uint64) Unwrap(defaultValue ...uint64) uint64 {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(uint64)
+type Uint64s struct {
+	Valid bool
+	Value []uint64
 }
 
 type Float32 struct {
@@ -160,14 +100,9 @@ type Float32 struct {
 	Value float32
 }
 
-func (o Float32) Unwrap(defaultValue ...float32) float32 {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(float32)
+type Float32s struct {
+	Valid bool
+	Value []float32
 }
 
 type Float64 struct {
@@ -175,14 +110,9 @@ type Float64 struct {
 	Value float64
 }
 
-func (o Float64) Unwrap(defaultValue ...float64) float64 {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(float64)
+type Float64s struct {
+	Valid bool
+	Value []float64
 }
 
 type Byte struct {
@@ -190,14 +120,9 @@ type Byte struct {
 	Value byte
 }
 
-func (o Byte) Unwrap(defaultValue ...byte) byte {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(byte)
+type Bytes struct {
+	Valid bool
+	Value []byte
 }
 
 type Rune struct {
@@ -205,14 +130,9 @@ type Rune struct {
 	Value rune
 }
 
-func (o Rune) Unwrap(defaultValue ...rune) rune {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(rune)
+type Runes struct {
+	Valid bool
+	Value []rune
 }
 
 type Bool struct {
@@ -220,27 +140,7 @@ type Bool struct {
 	Value bool
 }
 
-func (o Bool) Unwrap(defaultValue ...bool) bool {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(bool)
-}
-
-type Time struct {
+type Bools struct {
 	Valid bool
-	Value time.Time
-}
-
-func (o Time) Unwrap(defaultValue ...time.Time) time.Time {
-	if o.Valid {
-		return o.Value
-	}
-	if len(defaultValue) > 0 {
-		return defaultValue[0]
-	}
-	return reflect.New(reflect.TypeOf(o.Value)).Elem().Interface().(time.Time)
+	Value []bool
 }

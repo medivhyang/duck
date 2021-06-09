@@ -38,18 +38,18 @@ func (l *Logger) New(module string) *Logger {
 	}
 }
 
-func (l *Logger) SetModule(module string) *Logger {
+func (l *Logger) Module(module string) *Logger {
 	l.module = module
 	return l
 }
 
-func (l *Logger) SetLevel(level Level) *Logger {
+func (l *Logger) Level(level Level) *Logger {
 	l.level = level
 	return l
 }
 
-func (l *Logger) SetAppenders(appenders ...Appender) *Logger {
-	l.appenders = appenders
+func (l *Logger) Append(appenders ...Appender) *Logger {
+	l.appenders = append(l.appenders, appenders...)
 	return l
 }
 
@@ -64,33 +64,31 @@ func (l *Logger) DisableFile() *Logger {
 	return l
 }
 
-func (l *Logger) SetFileSkip(skip int) *Logger {
+func (l *Logger) FileSkip(skip int) *Logger {
 	l.fileSkip = skip
 	return l
 }
 
-func (l *Logger) SetTimeLocation(location *time.Location) *Logger {
+func (l *Logger) TimeLocation(location *time.Location) *Logger {
 	l.timeLocation = location
 	return l
 }
 
-func (l *Logger) append(level Level, message string, data ...map[string]interface{}) {
-	if level < l.level {
+func (l *Logger) appendEvent(input EventInput) {
+	if input.Level < l.level {
 		return
 	}
-	e := Event{
-		Module:  l.module,
-		Level:   level,
-		Message: message,
+	var e = Event{
+		Module:  input.Module,
+		Level:   input.Level,
+		Message: input.Message,
+		Data:    input.Data,
 		Time:    time.Now(),
 	}
 	if l.timeLocation != nil {
 		e.Time = e.Time.In(l.timeLocation)
 	}
-	if len(data) > 0 {
-		e.Data = data[0]
-	}
-	if l.enableFile && level >= l.fileLevel {
+	if l.enableFile && input.Level >= l.fileLevel {
 		_, file, line, ok := runtime.Caller(l.fileSkip)
 		if !ok {
 			file = "???"
@@ -106,41 +104,101 @@ func (l *Logger) append(level Level, message string, data ...map[string]interfac
 }
 
 func (l *Logger) Debug(message string, data ...map[string]interface{}) {
-	l.append(LevelDebug, message, data...)
+	e := EventInput{
+		Level:   LevelDebug,
+		Message: message,
+		Data:    nil,
+	}
+	if len(data) > 0 {
+		e.Data = data[0]
+	}
+	l.appendEvent(e)
 }
 
 func (l *Logger) Debugf(format string, args ...interface{}) {
-	l.append(LevelDebug, fmt.Sprintf(format, args...))
+	e := EventInput{
+		Level:   LevelDebug,
+		Message: fmt.Sprintf(format, args...),
+	}
+	l.appendEvent(e)
 }
 
 func (l *Logger) Info(message string, data ...map[string]interface{}) {
-	l.append(LevelInfo, message, data...)
+	e := EventInput{
+		Level:   LevelInfo,
+		Message: message,
+		Data:    nil,
+	}
+	if len(data) > 0 {
+		e.Data = data[0]
+	}
+	l.appendEvent(e)
 }
 
 func (l *Logger) Infof(format string, args ...interface{}) {
-	l.append(LevelInfo, fmt.Sprintf(format, args...))
+	e := EventInput{
+		Level:   LevelInfo,
+		Message: fmt.Sprintf(format, args...),
+	}
+	l.appendEvent(e)
 }
 
 func (l *Logger) Warn(message string, data ...map[string]interface{}) {
-	l.append(LevelWarn, message, data...)
+	e := EventInput{
+		Level:   LevelWarn,
+		Message: message,
+		Data:    nil,
+	}
+	if len(data) > 0 {
+		e.Data = data[0]
+	}
+	l.appendEvent(e)
 }
 
 func (l *Logger) Warnf(format string, args ...interface{}) {
-	l.append(LevelWarn, fmt.Sprintf(format, args...))
+	e := EventInput{
+		Level:   LevelWarn,
+		Message: fmt.Sprintf(format, args...),
+	}
+	l.appendEvent(e)
 }
 
 func (l *Logger) Error(message string, data ...map[string]interface{}) {
-	l.append(LevelError, message, data...)
+	e := EventInput{
+		Level:   LevelError,
+		Message: message,
+		Data:    nil,
+	}
+	if len(data) > 0 {
+		e.Data = data[0]
+	}
+	l.appendEvent(e)
 }
 
 func (l *Logger) Errorf(format string, args ...interface{}) {
-	l.append(LevelError, fmt.Sprintf(format, args...))
+	e := EventInput{
+		Level:   LevelError,
+		Message: fmt.Sprintf(format, args...),
+	}
+	l.appendEvent(e)
 }
 
 func (l *Logger) Fatal(message string, data ...map[string]interface{}) {
-	l.append(LevelFatal, message, data...)
+	e := EventInput{
+		Level:   LevelFatal,
+		Message: message,
+		Data:    nil,
+	}
+	if len(data) > 0 {
+		e.Data = data[0]
+	}
+	l.appendEvent(e)
 }
 
 func (l *Logger) Fatalf(format string, args ...interface{}) {
-	l.append(LevelFatal, fmt.Sprintf(format, args...))
+	e := EventInput{
+		Level:   LevelFatal,
+		Message: fmt.Sprintf(format, args...),
+	}
+	l.appendEvent(e)
 }

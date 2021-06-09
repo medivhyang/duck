@@ -1,21 +1,45 @@
 package config
 
-type File struct {
-	path string
+import (
+	"errors"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+)
+
+func LoadFile(filePath string, target interface{}, decode DecodeFunc) error {
+	if decode == nil {
+		return errors.New("require decode func")
+	}
+	bs, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		return err
+	}
+	return decode(bs, target)
 }
 
-func NewFile(path string) *File {
-	return &File{path: path}
+func StoreFile(i interface{}, filePath string, encode EncodeFunc) error {
+	if encode == nil {
+		return errors.New("require encode func")
+	}
+	bs, err := encode(i)
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(filepath.Dir(filePath), os.ModePerm); err != nil {
+		return err
+	}
+	return ioutil.WriteFile(filePath, bs, os.ModePerm)
 }
 
-func (f *File) Load(contentType ContentType, target interface{}) error {
-	return LoadFile(contentType, f.path, target)
-}
+func LoadOrStoreFile(filePath string, value interface{}, decode DecodeFunc, encode EncodeFunc) error {
+	_, err := os.Stat(filePath)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return err
+		}
 
-func (f *File) Store(contentType ContentType, source interface{}) error {
-	return StoreFile(contentType, source, f.path)
-}
-
-func (f *File) LoadOrStore(contentType ContentType, value interface{}) error {
-	return LoadOrStoreFile(contentType, f.path, value)
+		return StoreFile(value, filePath, encode)
+	}
+	return LoadFile(filePath, value, decode)
 }

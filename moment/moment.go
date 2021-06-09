@@ -2,45 +2,46 @@ package moment
 
 import "time"
 
-func BeginOfDay(t ...time.Time) time.Time {
-	var finalT time.Time
-	if len(t) > 0 {
-		finalT = t[0]
-	} else {
-		finalT = time.Now()
+func BeginOfYear(year int, location *time.Location) time.Time {
+	if location == nil {
+		location = time.Local
 	}
-	return time.Date(finalT.Year(), finalT.Month(), finalT.Day(), 0, 0, 0, 0, finalT.Location())
+	return time.Date(year, 1, 1, 0, 0, 0, 0, location)
 }
 
-func EndOfDay(t ...time.Time) time.Time {
-	var finalT time.Time
-	if len(t) > 0 {
-		finalT = t[0]
-	} else {
-		finalT = time.Now()
+func EndOfYear(year int, location *time.Location) time.Time {
+	if location == nil {
+		location = time.Local
 	}
-	return time.Date(finalT.Year(), finalT.Month(), finalT.Day(), 23, 59, 59, 999, finalT.Location())
+	return time.Date(year, 12, 31, 23, 59, 59, 999999999, location)
 }
 
-func BeginOfMonth(t ...time.Time) time.Time {
-	var finalT time.Time
-	if len(t) > 0 {
-		finalT = t[0]
-	} else {
-		finalT = time.Now()
+func BeginOfMonth(year, month int, location *time.Location) time.Time {
+	if location == nil {
+		location = time.Local
 	}
-	return time.Date(finalT.Year(), finalT.Month(), 1, 0, 0, 0, 0, finalT.Location())
+	return time.Date(year, time.Month(month), 1, 0, 0, 0, 0, location)
 }
 
-func EndOfMonth(t ...time.Time) time.Time {
-	var finalT time.Time
-	if len(t) > 0 {
-		finalT = t[0]
-	} else {
-		finalT = time.Now()
+func EndOfMonth(year, month int, location *time.Location) time.Time {
+	if location == nil {
+		location = time.Local
 	}
-	year, month, _ := finalT.Date()
-	return time.Date(year, month, DayOfMonth(year, int(month)), 23, 59, 59, 999, finalT.Location())
+	return time.Date(year, time.Month(month), DayOfMonth(year, month), 23, 59, 59, 999999999, location)
+}
+
+func BeginOfDay(year, month, day int, location *time.Location) time.Time {
+	if location == nil {
+		location = time.Local
+	}
+	return time.Date(year, time.Month(month), day, 0, 0, 0, 0, location)
+}
+
+func EndOfDay(year, month, day int, location *time.Location) time.Time {
+	if location == nil {
+		location = time.Local
+	}
+	return time.Date(year, time.Month(month), day, 23, 59, 59, 999999999, location)
 }
 
 func DayOfYear(year int) int {
