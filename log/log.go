@@ -1,12 +1,47 @@
 package log
 
-type Fields = map[string]interface{}
+import "time"
 
-var Default = New("", LevelDebug, NewConsoleAppender(NewTextFormatter())).FileSkip(3)
+type Level int
 
-func NewModule(name string) *Logger {
-	return Default.New(name)
+const (
+	LevelDebug Level = iota
+	LevelInfo
+	LevelWarn
+	LevelError
+	LevelFatal
+)
+
+var levelText = map[Level]string{
+	LevelDebug: "debug",
+	LevelInfo:  "info",
+	LevelWarn:  "warn",
+	LevelError: "error",
+	LevelFatal: "fatal",
 }
+
+func LevelText(l Level) string {
+	return levelText[l]
+}
+
+type (
+	Event struct {
+		Module  string
+		Level   Level
+		Message string
+		Data    map[string]interface{}
+		Time    time.Time
+	}
+	Appender interface {
+		Append(e Event) error
+	}
+	Formatter interface {
+		Format(e Event) ([]byte, error)
+	}
+	Fields = map[string]interface{}
+)
+
+var Default = New("", LevelDebug, NewConsoleAppender(NewTextFormatter()))
 
 func Debug(message string, data ...map[string]interface{}) {
 	Default.Debug(message, data...)

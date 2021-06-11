@@ -4,38 +4,31 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
 )
 
 func NewTextFormatter() *TextFormatter {
-	return &TextFormatter{timeLayout: time.RFC3339}
+	return &TextFormatter{layout: time.RFC3339}
 }
 
 type TextFormatter struct {
-	timeLayout string
+	layout string
 }
 
-func (f *TextFormatter) SetTimeLayout(layout string) *TextFormatter {
-	f.timeLayout = layout
+func (f *TextFormatter) Layout(l string) *TextFormatter {
+	f.layout = l
 	return f
 }
 
 func (f *TextFormatter) Format(e Event) ([]byte, error) {
 	buf := bytes.Buffer{}
 
-	buf.WriteString(fmt.Sprintf("%s", e.Time.Format(f.timeLayout)))
+	buf.WriteString(fmt.Sprintf("%s", e.Time.Format(f.layout)))
 	if e.Module != "" {
 		buf.WriteString(fmt.Sprintf(": [%s]", e.Module))
 	}
 	if LevelText(e.Level) != "" {
 		buf.WriteString(fmt.Sprintf(": [%s]", LevelText(e.Level)))
-	}
-	if len(e.File) > 0 {
-		buf.WriteString(": ")
-		buf.WriteString(e.File)
-		buf.WriteString(":")
-		buf.WriteString(strconv.Itoa(e.Line))
 	}
 	buf.WriteString(fmt.Sprintf(": %s", e.Message))
 	if e.Data != nil {
