@@ -1,2 +1,3 @@
-# duck
-go language utils
+# Duck
+
+A go language utils.
