@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-type RequestBuilder struct {
+type Builder struct {
 	client  *http.Client
 	prefix  string
 	method  string
@@ -23,73 +23,73 @@ type RequestBuilder struct {
 	err     error
 }
 
-type RequestTemplate struct {
+type Template struct {
 	Client  *http.Client
 	Prefix  string
 	Queries map[string]string
 	Headers map[string]string
 }
 
-func (t *RequestTemplate) New() *RequestBuilder {
+func (t *Template) New() *Builder {
 	return NewBuilder().Client(t.Client).Prefix(t.Prefix).Headers(t.Headers).Queries(t.Queries)
 }
 
-func NewBuilder() *RequestBuilder {
-	return &RequestBuilder{}
+func NewBuilder() *Builder {
+	return &Builder{}
 }
 
-func (b *RequestBuilder) Client(client *http.Client) *RequestBuilder {
+func (b *Builder) Client(client *http.Client) *Builder {
 	b.client = client
 	return b
 }
 
-func (b *RequestBuilder) Prefix(p string) *RequestBuilder {
+func (b *Builder) Prefix(p string) *Builder {
 	b.prefix = p
 	return b
 }
 
-func (b *RequestBuilder) Get(path string) *RequestBuilder {
+func (b *Builder) Get(path string) *Builder {
 	b.method = http.MethodGet
 	b.path = path
 	return b
 }
 
-func (b *RequestBuilder) Post(path string) *RequestBuilder {
+func (b *Builder) Post(path string) *Builder {
 	b.method = http.MethodPost
 	b.path = path
 	return b
 }
 
-func (b *RequestBuilder) Put(path string) *RequestBuilder {
+func (b *Builder) Put(path string) *Builder {
 	b.method = http.MethodPut
 	b.path = path
 	return b
 }
 
-func (b *RequestBuilder) Delete(path string) *RequestBuilder {
+func (b *Builder) Delete(path string) *Builder {
 	b.method = http.MethodDelete
 	b.path = path
 	return b
 }
 
-func (b *RequestBuilder) Patch(path string) *RequestBuilder {
+func (b *Builder) Patch(path string) *Builder {
 	b.method = http.MethodPatch
 	b.path = path
 	return b
 }
 
-func (b *RequestBuilder) Options(path string) *RequestBuilder {
+func (b *Builder) Options(path string) *Builder {
 	b.method = http.MethodOptions
 	b.path = path
 	return b
 }
 
-func (b *RequestBuilder) Query(k, v string) *RequestBuilder {
+func (b *Builder) Query(k, v string) *Builder {
 	b.queries[k] = v
 	return b
 }
 
-func (b *RequestBuilder) Queries(m map[string]string) *RequestBuilder {
+func (b *Builder) Queries(m map[string]string) *Builder {
 	if b.queries == nil {
 		b.queries = map[string]string{}
 	}
@@ -99,12 +99,12 @@ func (b *RequestBuilder) Queries(m map[string]string) *RequestBuilder {
 	return b
 }
 
-func (b *RequestBuilder) Header(k, v string) *RequestBuilder {
+func (b *Builder) Header(k, v string) *Builder {
 	b.headers[k] = v
 	return b
 }
 
-func (b *RequestBuilder) Headers(m map[string]string) *RequestBuilder {
+func (b *Builder) Headers(m map[string]string) *Builder {
 	if b.headers == nil {
 		b.headers = map[string]string{}
 	}
@@ -114,12 +114,12 @@ func (b *RequestBuilder) Headers(m map[string]string) *RequestBuilder {
 	return b
 }
 
-func (b *RequestBuilder) WriteText(text string) *RequestBuilder {
+func (b *Builder) WriteText(text string) *Builder {
 	b.body = strings.NewReader(text)
 	return b
 }
 
-func (b *RequestBuilder) WriteJSON(v interface{}) *RequestBuilder {
+func (b *Builder) WriteJSON(v interface{}) *Builder {
 	bs, err := json.Marshal(v)
 	if err != nil {
 		b.err = err
@@ -129,7 +129,7 @@ func (b *RequestBuilder) WriteJSON(v interface{}) *RequestBuilder {
 	return b
 }
 
-func (b *RequestBuilder) WriteXML(v interface{}) *RequestBuilder {
+func (b *Builder) WriteXML(v interface{}) *Builder {
 	bs, err := xml.Marshal(v)
 	if err != nil {
 		b.err = err
@@ -139,7 +139,7 @@ func (b *RequestBuilder) WriteXML(v interface{}) *RequestBuilder {
 	return b
 }
 
-func (b *RequestBuilder) WriteFile(filename string) *RequestBuilder {
+func (b *Builder) WriteFile(filename string) *Builder {
 	file, err := os.Open(filename)
 	if err != nil {
 		b.err = err
@@ -149,7 +149,7 @@ func (b *RequestBuilder) WriteFile(filename string) *RequestBuilder {
 	return b
 }
 
-func (b *RequestBuilder) WriteFormFile(formName string, fileName string) *RequestBuilder {
+func (b *Builder) WriteFormFile(formName string, fileName string) *Builder {
 	w := multipart.NewWriter(&bytes.Buffer{})
 	defer w.Close()
 
@@ -170,12 +170,12 @@ func (b *RequestBuilder) WriteFormFile(formName string, fileName string) *Reques
 	return b
 }
 
-func (b *RequestBuilder) WriteBody(r io.Reader) *RequestBuilder {
+func (b *Builder) WriteBody(r io.Reader) *Builder {
 	b.body = r
 	return b
 }
 
-func (b *RequestBuilder) Do(client ...*http.Client) Response {
+func (b *Builder) Do(client ...*http.Client) Response {
 	if b.err != nil {
 		return ErrorResponse(b.err)
 	}
@@ -216,7 +216,7 @@ func (b *RequestBuilder) Do(client ...*http.Client) Response {
 	return WrapResponse(response)
 }
 
-func (b *RequestBuilder) buildURL() string {
+func (b *Builder) buildURL() string {
 	s := b.prefix + b.path
 	if strings.Contains(s, "?") {
 		s += "&"

@@ -3,13 +3,15 @@ package main
 import (
 	"fmt"
 	"github.com/medivhyang/duck/requests"
-	"log"
 )
 
 func main() {
 	s, err := requests.GetText("https://www.baidu.com")
 	if err != nil {
-		log.Fatalln(err)
+		panic(err)
 	}
 	fmt.Println(s)
+	if err := requests.SaveFile("https://www.baidu.com", "demo.txt"); err != nil {
+		panic(err)
+	}
 }
