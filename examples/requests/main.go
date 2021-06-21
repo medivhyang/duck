@@ -11,7 +11,4 @@ func main() {
 		panic(err)
 	}
 	fmt.Println(s)
-	if err := requests.SaveFile("https://www.baidu.com", "demo.txt"); err != nil {
-		panic(err)
-	}
 }

@@ -1,10 +1,10 @@
-package ice
+package reflectutil
 
 import (
 	"reflect"
 )
 
-func MapStruct(src interface{}, dst interface{}, nameMap map[string]string) {
+func MapStruct(src interface{}, dst interface{}, nameMapFunc func(string) string) {
 	srvRv := reflect.ValueOf(src)
 	if DeepUnrefType(srvRv.Type()).Kind() != reflect.Struct {
 		panic("ice: map struct: require struct type")
@@ -14,17 +14,21 @@ func MapStruct(src interface{}, dst interface{}, nameMap map[string]string) {
 		panic("ice: map struct: require struct pointer type")
 	}
 	m := ParseStructToMap(src)
-	for name, value := range m {
-		newName, ok := nameMap[name]
-		if ok {
+	copyMap := make(map[string]interface{}, len(m))
+	for k, v := range m {
+		copyMap[k] = v
+	}
+	for name, value := range copyMap {
+		newName := nameMapFunc(name)
+		if newName != name {
 			m[newName] = value
 			delete(m, name)
 		}
 	}
-	ParseMapToStruct(m, dst)
+	ParseMapToStruct(m, dst, nil)
 }
 
-func ParseMapToStruct(m map[string]interface{}, i interface{}) {
+func ParseMapToStruct(m map[string]interface{}, i interface{}, nameMapFunc func(string) string) {
 	dstRv := reflect.ValueOf(i)
 	dstRt := dstRv.Type()
 	if dstRt.Kind() != reflect.Ptr && DeepUnrefType(dstRt).Kind() != reflect.Struct {
@@ -36,6 +40,9 @@ func ParseMapToStruct(m map[string]interface{}, i interface{}) {
 		fieldMap[drv.Type().Field(i).Name] = drv.Field(i)
 	}
 	for k, v := range m {
+		if nameMapFunc != nil {
+			k = nameMapFunc(k)
+		}
 		fv, ok := fieldMap[k]
 		if !ok {
 			continue
